@@ -1,4 +1,5 @@
 streamlit
-pillow
+easyocr
+opencv-python-headless
+Pillow
 numpy
-pytesseract

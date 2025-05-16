@@ -1,12 +1,10 @@
-
 import streamlit as st
 from PIL import Image
 import numpy as np
-import pytesseract
+import easyocr
 
-
-st.title("OCR - Image to Text")
-st.markdown("Upload an image and extract text using Tesseract OCR.")
+st.title("OCR - Image to Text with EasyOCR")
+st.markdown("Upload an image and extract text using EasyOCR.")
 
 uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
 
@@ -14,13 +12,15 @@ if uploaded_file is not None:
     image = Image.open(uploaded_file)
     st.image(image, caption="Uploaded Image", use_column_width=True)
 
-    gray = np.array(image.convert("L"))  # Convert to grayscale
-    thresh = np.where(gray > 150, 255, 0).astype('uint8')  # Threshold manually
+    # Convert image to numpy array (EasyOCR input)
+    img_array = np.array(image.convert('RGB'))
 
+    # Initialize EasyOCR Reader (English)
+    reader = easyocr.Reader(['en'])
 
-    # OCR
-    text = pytesseract.image_to_string(thresh)
+    # Perform OCR
+    result = reader.readtext(img_array, detail=0)
 
+    # Show extracted text
     st.subheader("Extracted Text")
-    st.text_area("Text Output", text, height=200)
-
+    st.text_area("Text Output", '\n'.join(result), height=200)
